@@ -2,7 +2,7 @@
 name = "rathole-operator"
 version = "0.1.0"
 edition = "2021"
-license = "MIT"
+license = "Apache-2.0"
 description = "A rathole-backed Kubernetes LoadBalancer controller (loadBalancerClass) with push-based server config sync"
 repository = "https://github.com/tatupesonen/rathole-operator"
 

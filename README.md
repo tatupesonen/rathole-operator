@@ -58,4 +58,4 @@ CI builds and publishes `ghcr.io/tatupesonen/rathole-operator` on push to `main`
 
 ## License
 
-MIT
+Apache-2.0
