@@ -5,9 +5,9 @@ use crate::crd::RatholeConfiguration;
 use crate::error::ServiceError;
 
 /// The loadBalancerClass this controller claims.
-pub const LB_CLASS: &str = "rathole.dev/tunnel";
+pub const LB_CLASS: &str = "tatupesonen.rathole/tunnel";
 /// Optional annotation selecting which RatholeConfiguration backs the Service.
-pub const ANNOT_CONFIG: &str = "rathole.dev/configuration";
+pub const ANNOT_CONFIG: &str = "tatupesonen.rathole/configuration";
 /// RatholeConfiguration name used when the annotation is absent.
 pub const DEFAULT_CONFIG: &str = "default";
 

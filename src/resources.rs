@@ -71,7 +71,7 @@ pub fn deployment(rc: &RatholeConfiguration, config_hash: &str, owner: &Value) -
             "template": {
                 "metadata": {
                     "labels": labels(rc),
-                    "annotations": { "rathole.dev/config-hash": config_hash },
+                    "annotations": { "tatupesonen.rathole/config-hash": config_hash },
                 },
                 "spec": {
                     "securityContext": {

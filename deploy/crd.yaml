@@ -1,9 +1,9 @@
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
-  name: ratholeconfigurations.rathole.dev
+  name: ratholeconfigurations.tatupesonen.rathole
 spec:
-  group: rathole.dev
+  group: tatupesonen.rathole
   names:
     categories: []
     kind: RatholeConfiguration
@@ -33,9 +33,9 @@ spec:
         properties:
           spec:
             description: |-
-              `RatholeConfiguration` defines a tunnel backend: a rathole server on a public VPS that this cluster dials out to. It is the "cloud provider" for our LoadBalancer implementation — Services of `type: LoadBalancer` with `loadBalancerClass: rathole.dev/tunnel` are exposed through it.
+              `RatholeConfiguration` defines a tunnel backend: a rathole server on a public VPS that this cluster dials out to. It is the "cloud provider" for our LoadBalancer implementation — Services of `type: LoadBalancer` with `loadBalancerClass: tatupesonen.rathole/tunnel` are exposed through it.
 
-              Cluster-scoped: Services in any namespace bind to it (by name via the `rathole.dev/configuration` annotation, or the `default`-named config).
+              Cluster-scoped: Services in any namespace bind to it (by name via the `tatupesonen.rathole/configuration` annotation, or the `default`-named config).
             properties:
               defaultToken:
                 description: Shared `default_token`, read from a Secret. Set the SAME value as `default_token` on the rathole server (the operator pushes it there if `serverConfigPush` is configured).

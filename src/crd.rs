@@ -3,20 +3,20 @@ use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
 /// API group for the operator's CRDs.
-pub const GROUP: &str = "rathole.dev";
+pub const GROUP: &str = "tatupesonen.rathole";
 pub const VERSION: &str = "v1alpha1";
 pub const KIND: &str = "RatholeConfiguration";
 
 /// `RatholeConfiguration` defines a tunnel backend: a rathole server on a public
 /// VPS that this cluster dials out to. It is the "cloud provider" for our
 /// LoadBalancer implementation — Services of `type: LoadBalancer` with
-/// `loadBalancerClass: rathole.dev/tunnel` are exposed through it.
+/// `loadBalancerClass: tatupesonen.rathole/tunnel` are exposed through it.
 ///
 /// Cluster-scoped: Services in any namespace bind to it (by name via the
-/// `rathole.dev/configuration` annotation, or the `default`-named config).
+/// `tatupesonen.rathole/configuration` annotation, or the `default`-named config).
 #[derive(CustomResource, Clone, Debug, Deserialize, Serialize, JsonSchema)]
 #[kube(
-    group = "rathole.dev",
+    group = "tatupesonen.rathole",
     version = "v1alpha1",
     kind = "RatholeConfiguration",
     plural = "ratholeconfigurations",

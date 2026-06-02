@@ -7,9 +7,9 @@ metadata:
   namespace: games
 spec:
   type: LoadBalancer
-  loadBalancerClass: rathole.dev/tunnel
+  loadBalancerClass: tatupesonen.rathole/tunnel
   # Binds to the "default" RatholeConfiguration. To pick another backend:
-  #   metadata.annotations: { rathole.dev/configuration: "homelab" }
+  #   metadata.annotations: { tatupesonen.rathole/configuration: "homelab" }
   # We forward to the ClusterIP, so node ports aren't needed:
   allocateLoadBalancerNodePorts: false
   selector:

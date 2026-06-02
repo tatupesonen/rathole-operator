@@ -4,7 +4,7 @@ A Kubernetes **LoadBalancer controller** (kube-rs) that exposes Services from a
 private/NAT'd cluster via a [rathole](https://github.com/rapiz1/rathole) tunnel
 to a VPS, like inlets-operator, for rathole.
 
-Set `type: LoadBalancer` + `loadBalancerClass: rathole.dev/tunnel`; the operator
+Set `type: LoadBalancer` + `loadBalancerClass: tatupesonen.rathole/tunnel`; the operator
 opens the port on the VPS, runs the rathole client, and writes the VPS address
 into the Service's `EXTERNAL-IP`. TCP and UDP (UDP matters for game servers). A
 `RatholeConfiguration` (cluster-scoped) holds the VPS address + shared token;
@@ -32,7 +32,7 @@ kubectl apply -f examples/ratholeconfiguration.yaml        # edit addrs/url firs
 **Expose a Service:**
 
 ```bash
-kubectl patch svc myapp -p '{"spec":{"type":"LoadBalancer","loadBalancerClass":"rathole.dev/tunnel"}}'
+kubectl patch svc myapp -p '{"spec":{"type":"LoadBalancer","loadBalancerClass":"tatupesonen.rathole/tunnel"}}'
 kubectl get svc myapp        # EXTERNAL-IP = your VPS; reach it at VPS:port
 ```
 

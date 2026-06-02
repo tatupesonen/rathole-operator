@@ -21,7 +21,7 @@ use crate::error::{Error, Result};
 use crate::lb::{self, Exposed};
 use crate::{push, resources};
 
-const FINALIZER: &str = "rathole.dev/cleanup";
+const FINALIZER: &str = "tatupesonen.rathole/cleanup";
 const FIELD_MANAGER: &str = "rathole-operator";
 const REQUEUE: Duration = Duration::from_secs(300);
 const RETRY: Duration = Duration::from_secs(60);

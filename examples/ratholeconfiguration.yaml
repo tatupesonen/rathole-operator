@@ -11,11 +11,11 @@ stringData:
   # Generate with: openssl rand -hex 32
   token: "REPLACE_WITH_SHARED_RATHOLE_TOKEN"
 ---
-apiVersion: rathole.dev/v1alpha1
+apiVersion: tatupesonen.rathole/v1alpha1
 kind: RatholeConfiguration
 metadata:
-  # Services with loadBalancerClass rathole.dev/tunnel and NO
-  # `rathole.dev/configuration` annotation bind to the config named "default".
+  # Services with loadBalancerClass tatupesonen.rathole/tunnel and NO
+  # `tatupesonen.rathole/configuration` annotation bind to the config named "default".
   name: default
 spec:
   remoteAddr: "vps.example.com:2333"

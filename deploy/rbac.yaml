@@ -10,13 +10,13 @@ metadata:
   name: rathole-operator
 rules:
   # The CRD it reconciles (+ status/finalizers subresources).
-  - apiGroups: ["rathole.dev"]
+  - apiGroups: ["tatupesonen.rathole"]
     resources: ["ratholeconfigurations"]
     verbs: ["get", "list", "watch", "patch", "update"]
-  - apiGroups: ["rathole.dev"]
+  - apiGroups: ["tatupesonen.rathole"]
     resources: ["ratholeconfigurations/status"]
     verbs: ["get", "patch", "update"]
-  - apiGroups: ["rathole.dev"]
+  - apiGroups: ["tatupesonen.rathole"]
     resources: ["ratholeconfigurations/finalizers"]
     verbs: ["update"]
   # Watch LoadBalancer Services cluster-wide; write EXTERNAL-IP back to status.
