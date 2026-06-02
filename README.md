@@ -52,9 +52,19 @@ CI builds and publishes `ghcr.io/tatupesonen/rathole-operator` on push to `main`
 
 - Single VPS IP, port-multiplexed: public port = Service port; conflicts are
   reported in status, not remapped.
-- Backend sees the rathole client pod as source IP (no PROXY protocol).
-- The tunnel hop is plaintext today; **rathole Noise-protocol encryption in
-  transit is next**.
+- Backend sees the rathole client pod as source IP (no PROXY protocol yet).
+- The tunnel hop is plaintext today (no encryption in transit).
+
+## TODO
+
+- **Encryption in transit (rathole Noise protocol).** Wrap the cluster↔VPS hop
+  with rathole's Noise transport (`[transport] type = "noise"` + a keypair on
+  both ends), surfaced through the CRD. Today the hop is plaintext.
+- **Preserve client source IP (PROXY protocol).** Emit PROXY protocol over the
+  tunnel so a backend/gateway sees the real client IP (e.g. an HTTP gateway sets
+  `X-Forwarded-For`). Needs rathole PROXY support ([open upstream PR](https://github.com/rapiz1/rathole/issues/250))
+  and a PROXY-aware backend; true source IP for arbitrary UDP would instead need
+  an L3 (WireGuard) routing path.
 
 ## License
 
