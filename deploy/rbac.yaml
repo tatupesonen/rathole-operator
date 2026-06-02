@@ -1,0 +1,49 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: rathole-operator
+  namespace: rathole-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: rathole-operator
+rules:
+  # The CRD it reconciles (+ status/finalizers subresources).
+  - apiGroups: ["rathole.dev"]
+    resources: ["ratholeconfigurations"]
+    verbs: ["get", "list", "watch", "patch", "update"]
+  - apiGroups: ["rathole.dev"]
+    resources: ["ratholeconfigurations/status"]
+    verbs: ["get", "patch", "update"]
+  - apiGroups: ["rathole.dev"]
+    resources: ["ratholeconfigurations/finalizers"]
+    verbs: ["update"]
+  # Watch LoadBalancer Services cluster-wide; write EXTERNAL-IP back to status.
+  - apiGroups: [""]
+    resources: ["services"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: [""]
+    resources: ["services/status"]
+    verbs: ["get", "patch", "update"]
+  # Read the shared token; write the generated config Secret.
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  # Manage the rathole client Deployment.
+  - apiGroups: ["apps"]
+    resources: ["deployments"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: rathole-operator
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: rathole-operator
+subjects:
+  - kind: ServiceAccount
+    name: rathole-operator
+    namespace: rathole-system

@@ -1,0 +1,29 @@
+# Expose a workload by giving its Service type: LoadBalancer and our class.
+# The operator opens the port on the VPS and writes EXTERNAL-IP back to status.
+apiVersion: v1
+kind: Service
+metadata:
+  name: minecraft
+  namespace: games
+spec:
+  type: LoadBalancer
+  loadBalancerClass: rathole.dev/tunnel
+  # Binds to the "default" RatholeConfiguration. To pick another backend:
+  #   metadata.annotations: { rathole.dev/configuration: "homelab" }
+  # We forward to the ClusterIP, so node ports aren't needed:
+  allocateLoadBalancerNodePorts: false
+  selector:
+    app.kubernetes.io/name: minecraft
+  ports:
+    - name: mc
+      port: 25565          # also the public port on the VPS
+      targetPort: 25565
+      protocol: TCP
+    - name: voice
+      port: 27015
+      targetPort: 27015
+      protocol: UDP        # protocol is carried through to rathole
+---
+# kubectl get svc -n games minecraft
+# NAME        TYPE           CLUSTER-IP     EXTERNAL-IP    PORT(S)
+# minecraft   LoadBalancer   10.x.x.x       203.0.113.10   25565:..,27015:..

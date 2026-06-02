@@ -1,0 +1,136 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: ratholeconfigurations.rathole.dev
+spec:
+  group: rathole.dev
+  names:
+    categories: []
+    kind: RatholeConfiguration
+    plural: ratholeconfigurations
+    shortNames:
+    - rhc
+    singular: ratholeconfiguration
+  scope: Cluster
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.externalAddress
+      name: External
+      type: string
+    - jsonPath: .status.ready
+      name: Ready
+      type: boolean
+    - jsonPath: .status.message
+      name: Status
+      type: string
+    - jsonPath: .metadata.creationTimestamp
+      name: Age
+      type: date
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        description: Auto-generated derived type for RatholeConfigurationSpec via `CustomResource`
+        properties:
+          spec:
+            description: |-
+              `RatholeConfiguration` defines a tunnel backend: a rathole server on a public VPS that this cluster dials out to. It is the "cloud provider" for our LoadBalancer implementation — Services of `type: LoadBalancer` with `loadBalancerClass: rathole.dev/tunnel` are exposed through it.
+
+              Cluster-scoped: Services in any namespace bind to it (by name via the `rathole.dev/configuration` annotation, or the `default`-named config).
+            properties:
+              defaultToken:
+                description: Shared `default_token`, read from a Secret. Set the SAME value as `default_token` on the rathole server (the operator pushes it there if `serverConfigPush` is configured).
+                properties:
+                  key:
+                    default: token
+                    type: string
+                  secretName:
+                    type: string
+                  secretNamespace:
+                    default: rathole-system
+                    type: string
+                required:
+                - secretName
+                type: object
+              deploymentNamespace:
+                default: rathole-system
+                description: Namespace the managed Secret + Deployment are created in.
+                type: string
+              externalAddress:
+                description: Public address advertised back into each Service's `status.loadBalancer.ingress` (the EXTERNAL-IP). Defaults to the host part of `remoteAddr`.
+                nullable: true
+                type: string
+              image:
+                default: docker.io/rapiz1/rathole:v0.5.0
+                description: Image for the managed rathole client Deployment.
+                type: string
+              remoteAddr:
+                description: rathole server control-channel address the cluster dials out to, e.g. `vps.example.com:2333`.
+                type: string
+              serverConfigPush:
+                description: If set, the operator renders `server.toml` and pushes it to a receiver on the VPS so the rathole server opens/closes ports dynamically. If omitted, only the cluster (client) side is managed.
+                nullable: true
+                properties:
+                  insecureSkipVerify:
+                    default: false
+                    description: Accept a self-signed TLS cert on the receiver endpoint.
+                    type: boolean
+                  token:
+                    description: Bearer token for the receiver. Defaults to `defaultToken`.
+                    nullable: true
+                    properties:
+                      key:
+                        default: token
+                        type: string
+                      secretName:
+                        type: string
+                      secretNamespace:
+                        default: rathole-system
+                        type: string
+                    required:
+                    - secretName
+                    type: object
+                  url:
+                    description: Receiver endpoint, e.g. `https://vps.example.com:2334/config`.
+                    type: string
+                required:
+                - url
+                type: object
+            required:
+            - defaultToken
+            - remoteAddr
+            type: object
+          status:
+            nullable: true
+            properties:
+              exposedServices:
+                default: []
+                description: rathole service names currently exposed.
+                items:
+                  type: string
+                type: array
+              externalAddress:
+                description: The advertised external address.
+                nullable: true
+                type: string
+              message:
+                description: Human-readable status / warnings (skipped Services, port conflicts, push errors).
+                nullable: true
+                type: string
+              observedGeneration:
+                description: Generation last reconciled.
+                format: int64
+                nullable: true
+                type: integer
+              ready:
+                default: false
+                description: True once the client Deployment is applied (and server config pushed, if enabled).
+                type: boolean
+            type: object
+        required:
+        - spec
+        title: RatholeConfiguration
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}

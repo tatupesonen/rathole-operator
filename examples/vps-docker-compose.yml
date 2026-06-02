@@ -1,0 +1,60 @@
+# On the VPS: rathole server + the config receiver (sharing ./config), with
+# Caddy terminating TLS in front of the receiver. The operator POSTs server.toml
+# to the receiver, which writes it in place; rathole's watcher hot-reloads and
+# opens/closes the public ports. This is the topology validated end-to-end.
+#
+# Prep on the VPS before `docker compose up -d`:
+#   mkdir -p config certs
+#   chown -R 65532:65532 config        # receiver runs as nonroot uid 65532
+#   cat > config/server.toml <<'EOF'   # bootstrap: control channel, no services
+#   [server]
+#   bind_addr = "0.0.0.0:2333"
+#   default_token = "REPLACE_WITH_SHARED_RATHOLE_TOKEN"
+#
+#   [server.services]
+#   EOF
+#   # certs/cert.pem + certs/key.pem: a cert whose SANs include the VPS IP/host.
+#   openssl req -x509 -newkey rsa:2048 -nodes -days 365 \
+#     -keyout certs/key.pem -out certs/cert.pem -subj "/CN=rathole-receiver" \
+#     -addext "subjectAltName=DNS:vps.example.com,IP:VPS_PUBLIC_IP"
+#
+# Point the RatholeConfiguration at https://<vps>:2334/config. If you use a
+# self-signed cert, set serverConfigPush.insecureSkipVerify: true.
+services:
+  rathole:
+    image: docker.io/rapiz1/rathole:v0.5.0   # default features include hot-reload
+    restart: unless-stopped
+    command: ["--server", "/config/server.toml"]
+    network_mode: host        # public game/HTTP ports are dynamic; host net is simplest
+    volumes:
+      - ./config:/config
+
+  receiver:
+    image: ghcr.io/tatupesonen/rathole-operator:v0.1.0
+    restart: unless-stopped
+    entrypoint: ["/usr/local/bin/rathole-config-receiver"]
+    user: "65532:65532"       # nonroot; ./config must be writable by this uid
+    environment:
+      RECEIVER_TOKEN: "REPLACE_WITH_SHARED_RATHOLE_TOKEN"   # == defaultToken
+      RECEIVER_LISTEN: "0.0.0.0:8080"
+      RECEIVER_OUTPUT: "/config/server.toml"
+    volumes:
+      - ./config:/config
+
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    ports:
+      - "2334:2334"           # public HTTPS endpoint for the operator's push
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./certs:/certs:ro
+
+# Caddyfile:
+#   {
+#       auto_https off
+#   }
+#   :2334 {
+#       tls /certs/cert.pem /certs/key.pem
+#       reverse_proxy receiver:8080
+#   }

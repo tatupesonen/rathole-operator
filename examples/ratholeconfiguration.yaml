@@ -1,0 +1,36 @@
+# Shared token Secret (sops-encrypt this in a real GitOps repo).
+apiVersion: v1
+kind: Secret
+metadata:
+  name: rathole-token
+  namespace: rathole-system
+type: Opaque
+stringData:
+  # MUST equal `default_token` on the rathole server (the operator pushes it
+  # there). Also used as the bearer token for the config receiver by default.
+  # Generate with: openssl rand -hex 32
+  token: "REPLACE_WITH_SHARED_RATHOLE_TOKEN"
+---
+apiVersion: rathole.dev/v1alpha1
+kind: RatholeConfiguration
+metadata:
+  # Services with loadBalancerClass rathole.dev/tunnel and NO
+  # `rathole.dev/configuration` annotation bind to the config named "default".
+  name: default
+spec:
+  remoteAddr: "vps.example.com:2333"
+  defaultToken:
+    secretName: rathole-token
+    secretNamespace: rathole-system
+    key: token
+  # Advertised as EXTERNAL-IP on each Service (defaults to host of remoteAddr).
+  externalAddress: "203.0.113.10"
+  # Push rendered server.toml to the receiver on the VPS so it opens/closes
+  # ports dynamically. Omit this block to manage only the cluster side.
+  serverConfigPush:
+    url: "https://vps.example.com:2334/config"
+    # token: defaults to defaultToken
+    insecureSkipVerify: false
+  # Optional (defaults shown):
+  # image: docker.io/rapiz1/rathole:v0.5.0
+  # deploymentNamespace: rathole-system

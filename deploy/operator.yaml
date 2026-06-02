@@ -1,0 +1,45 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: rathole-system
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rathole-operator
+  namespace: rathole-system
+  labels:
+    app.kubernetes.io/name: rathole-operator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: rathole-operator
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: rathole-operator
+    spec:
+      serviceAccountName: rathole-operator
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+        runAsGroup: 65532
+      containers:
+        - name: operator
+          # Build + push from this repo (see README); pin a real tag.
+          image: ghcr.io/tatupesonen/rathole-operator:v0.1.0
+          env:
+            - name: RUST_LOG
+              value: "info,rathole_operator=info"
+          resources:
+            requests:
+              cpu: 25m
+              memory: 32Mi
+            limits:
+              memory: 128Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
