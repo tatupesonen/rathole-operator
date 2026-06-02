@@ -30,7 +30,7 @@ services:
       - ./config:/config
 
   receiver:
-    image: ghcr.io/tatupesonen/rathole-operator:v0.1.0
+    image: ghcr.io/tatupesonen/rathole-operator:latest
     restart: unless-stopped
     entrypoint: ["/usr/local/bin/rathole-config-receiver"]
     user: "65532:65532"       # nonroot; ./config must be writable by this uid

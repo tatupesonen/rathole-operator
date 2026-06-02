@@ -27,8 +27,9 @@ spec:
         runAsGroup: 65532
       containers:
         - name: operator
-          # Build + push from this repo (see README); pin a real tag.
-          image: ghcr.io/tatupesonen/rathole-operator:v0.1.0
+          # CI publishes :latest on main and :X.Y.Z on git tags. Pin a released
+          # version (e.g. :0.1.0) for production.
+          image: ghcr.io/tatupesonen/rathole-operator:latest
           env:
             - name: RUST_LOG
               value: "info,rathole_operator=info"
